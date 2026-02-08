@@ -7,7 +7,7 @@ import { useApp } from '../../context/AppContext.jsx'
 const TABS = [
   { id: 'profile', label: 'Profile' },
   { id: 'selfcheck', label: 'Self-Check' },
-  { id: 'project', label: 'Project' },
+  { id: 'project', label: 'Trajectory' },
   { id: 'history', label: 'History' },
   { id: 'report', label: 'Report' },
 ]
