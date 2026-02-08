@@ -9,6 +9,8 @@ import {
   saveDCode,
   getSCodes,
   addSCode as addSCodeToStorage,
+  getTargetDate,
+  saveTargetDate,
   isOnboarded,
   setOnboarded,
 } from '../utils/storage/localStorage.js'
@@ -22,6 +24,9 @@ export function AppProvider({ children }) {
 
   // S-codes (self-checks): Array of assessment codes
   const [scodes, setSCodes] = useState([])
+
+  // Target PFA date
+  const [targetPfaDate, setTargetPfaDate] = useState(null)
 
   // Current active tab
   const [activeTab, setActiveTab] = useState('profile')
@@ -39,6 +44,11 @@ export function AppProvider({ children }) {
 
     const storedSCodes = getSCodes()
     setSCodes(storedSCodes)
+
+    const storedTargetDate = getTargetDate()
+    if (storedTargetDate) {
+      setTargetPfaDate(storedTargetDate)
+    }
 
     // Show onboarding if first visit
     if (!isOnboarded()) {
@@ -64,6 +74,14 @@ export function AppProvider({ children }) {
     }
   }
 
+  // Update target PFA date
+  const updateTargetPfaDate = (date) => {
+    setTargetPfaDate(date)
+    if (date) {
+      saveTargetDate(date)
+    }
+  }
+
   // Complete onboarding
   const completeOnboarding = () => {
     setShowOnboarding(false)
@@ -79,6 +97,10 @@ export function AppProvider({ children }) {
     // S-codes
     scodes,
     addSCode,
+
+    // Target PFA date
+    targetPfaDate,
+    updateTargetPfaDate,
 
     // Navigation
     activeTab,
