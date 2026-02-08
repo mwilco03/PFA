@@ -5,10 +5,12 @@
 
 ## Key Decisions from User Feedback
 
-### 1. Profile & Target Date (CLARIFIED)
+### 1. Profile & Target Date (UPDATED - Sprint 2b)
 - **D-code**: Permanent demographic (DOB + gender) - stays separate
 - **Target PFA date**: Separate field, changes per PFA cycle
-- **Implementation**: Keep in Project tab, not Profile
+- **Implementation**: Moved to Profile tab (UX simplification)
+- **Self-Check Date**: Automatically uses today's date (transparent to user)
+- **Rationale**: S-code automatically logs date on generation, no need to ask twice
 - **Future**: May prompt "Did you take your PFA?" day after target date
 
 ### 2. Partial Component Testing (NEW)
@@ -214,6 +216,38 @@ function calculateScore(components, demographics) {
   return { individualScores, composite }
 }
 ```
+
+### 11. UX Refinement - Date Handling (Sprint 2b)
+
+**Problem Identified:**
+- Original design had assessment date picker in Self-Check tab
+- S-code already automatically encodes the assessment date
+- Asking user for date twice is redundant
+- Target PFA date was intended for different purpose (future projection)
+
+**Solution Implemented:**
+1. **Self-Check Tab**: Removed date picker, auto-use today's date
+   - Display message: "Recording today's self-check (MM/DD/YYYY)"
+   - S-code encodes date automatically when generated
+   - User doesn't need to think about dates during self-check
+2. **Profile Tab**: Added target PFA date input field
+   - Labeled: "Target PFA Date"
+   - Help text: "Set your upcoming official PFA date to see your trajectory"
+   - Saved to localStorage (pfa_target_date)
+   - Will be used by Trajectory tab for projections
+3. **AppContext**: Added targetPfaDate global state
+   - Loaded from localStorage on mount
+   - updateTargetPfaDate() function for updates
+   - Accessible to all tabs via useApp() hook
+
+**User Quote:**
+> "If it does we can keep that transparent to the user, never have to ask for it, just scode and go. target pfa date should be set on profile page"
+
+**Benefits:**
+- Cleaner UX (one less input during self-check)
+- Faster workflow (S-code and go)
+- Logical separation: Demographics in Profile, daily checks in Self-Check
+- Target date enables future Trajectory tab features
 
 ## Implementation Priority
 

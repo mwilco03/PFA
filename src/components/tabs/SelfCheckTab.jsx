@@ -12,8 +12,8 @@ import { calculateComponentScore, calculateCompositeScore, calculateWHtR, parseT
 export default function SelfCheckTab() {
   const { demographics, addSCode } = useApp()
 
-  // Assessment data
-  const [assessmentDate, setAssessmentDate] = useState(new Date().toISOString().split('T')[0])
+  // Assessment data - automatically use today's date
+  const assessmentDate = new Date().toISOString().split('T')[0]
 
   // Cardio
   const [cardioExercise, setCardioExercise] = useState(EXERCISES.RUN_2MILE)
@@ -126,7 +126,7 @@ export default function SelfCheckTab() {
       console.error('Error calculating scores:', err)
       setScores(null)
     }
-  }, [hasDemographics, demographics, assessmentDate, cardioExercise, cardioValue, cardioExempt, strengthExercise, strengthValue, strengthExempt, coreExercise, coreValue, coreExempt, heightInches, waistInches, bodyCompExempt])
+  }, [hasDemographics, demographics, cardioExercise, cardioValue, cardioExempt, strengthExercise, strengthValue, strengthExempt, coreExercise, coreValue, coreExempt, heightInches, waistInches, bodyCompExempt])
 
   const handleGenerateSCode = () => {
     setError('')
@@ -233,21 +233,14 @@ export default function SelfCheckTab() {
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Personal Assessment</h2>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Assessment Date
-          </label>
-          <input
-            type="date"
-            value={assessmentDate}
-            onChange={(e) => setAssessmentDate(e.target.value)}
-            max={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          {isDiagnostic && (
-            <p className="text-xs text-blue-600 mt-1">
-              📋 Diagnostic Period (non-scored)
-            </p>
-          )}
+          <p className="text-sm text-gray-600">
+            Recording today's self-check ({new Date().toLocaleDateString()})
+            {isDiagnostic && (
+              <span className="ml-2 text-blue-600">
+                📋 Diagnostic Period (non-scored)
+              </span>
+            )}
+          </p>
         </div>
 
         {/* Cardio Component */}

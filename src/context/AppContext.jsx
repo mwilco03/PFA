@@ -9,9 +9,12 @@ import {
   saveDCode,
   getSCodes,
   addSCode as addSCodeToStorage,
+  getTargetDate,
+  saveTargetDate,
   isOnboarded,
   setOnboarded,
 } from '../utils/storage/localStorage.js'
+import { decodeDCode } from '../utils/codec/dcode.js'
 
 const AppContext = createContext(null)
 
@@ -22,6 +25,9 @@ export function AppProvider({ children }) {
 
   // S-codes (self-checks): Array of assessment codes
   const [scodes, setSCodes] = useState([])
+
+  // Target PFA date
+  const [targetPfaDate, setTargetPfaDate] = useState(null)
 
   // Current active tab
   const [activeTab, setActiveTab] = useState('profile')
@@ -34,11 +40,22 @@ export function AppProvider({ children }) {
     const storedDCode = getDCode()
     if (storedDCode) {
       setDCode(storedDCode)
-      // TODO: Decode D-code when codec is implemented
+      // Decode D-code to populate demographics
+      try {
+        const decoded = decodeDCode(storedDCode)
+        setDemographics(decoded)
+      } catch (err) {
+        console.error('Error decoding stored D-code:', err)
+      }
     }
 
     const storedSCodes = getSCodes()
     setSCodes(storedSCodes)
+
+    const storedTargetDate = getTargetDate()
+    if (storedTargetDate) {
+      setTargetPfaDate(storedTargetDate)
+    }
 
     // Show onboarding if first visit
     if (!isOnboarded()) {
@@ -64,6 +81,14 @@ export function AppProvider({ children }) {
     }
   }
 
+  // Update target PFA date
+  const updateTargetPfaDate = (date) => {
+    setTargetPfaDate(date)
+    if (date) {
+      saveTargetDate(date)
+    }
+  }
+
   // Complete onboarding
   const completeOnboarding = () => {
     setShowOnboarding(false)
@@ -79,6 +104,10 @@ export function AppProvider({ children }) {
     // S-codes
     scodes,
     addSCode,
+
+    // Target PFA date
+    targetPfaDate,
+    updateTargetPfaDate,
 
     // Navigation
     activeTab,

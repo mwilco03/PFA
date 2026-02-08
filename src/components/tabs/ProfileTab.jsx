@@ -8,21 +8,34 @@ import { encodeDCode, decodeDCode } from '../../utils/codec/dcode.js'
 import { GENDER } from '../../utils/scoring/constants.js'
 
 export default function ProfileTab() {
-  const { dcode, demographics, updateDCode } = useApp()
+  const { dcode, demographics, updateDCode, targetPfaDate, updateTargetPfaDate } = useApp()
 
   const [dob, setDob] = useState('')
   const [gender, setGender] = useState(GENDER.MALE)
+  const [targetDate, setTargetDate] = useState('')
   const [pasteCode, setPasteCode] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Load demographics if available
+  // Load demographics and target date if available
   useEffect(() => {
     if (demographics) {
       setDob(demographics.dob.toISOString().split('T')[0])
       setGender(demographics.gender)
     }
   }, [demographics])
+
+  useEffect(() => {
+    if (targetPfaDate) {
+      setTargetDate(targetPfaDate)
+    }
+  }, [targetPfaDate])
+
+  const handleTargetDateChange = (e) => {
+    const newDate = e.target.value
+    setTargetDate(newDate)
+    updateTargetPfaDate(newDate)
+  }
 
   const handleGenerateDCode = () => {
     setError('')
@@ -117,6 +130,23 @@ export default function ProfileTab() {
                 Female
               </label>
             </div>
+          </div>
+
+          {/* Target PFA Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Target PFA Date
+            </label>
+            <input
+              type="date"
+              value={targetDate}
+              onChange={handleTargetDateChange}
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <p className="text-xs text-gray-600 mt-1">
+              Set your upcoming official PFA date to see your trajectory
+            </p>
           </div>
 
           {/* Generate Button */}
